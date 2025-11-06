@@ -1,65 +1,32 @@
 <script setup>
+import UserService from '@/services/UserService';
 import { ref } from 'vue';
+
 
 const emitEvent = defineEmits(['login-success']);
 
 const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
-const API_URL =  "https://api.escuelajs.co/api/v1";
+
 
 async function loginUser(){
   
-  const bodyObj = JSON.stringify({
-    email:email.value,
-    password:password.value
-  });
-  console.log('bodyObj ::',bodyObj);
+  
   try {
-    const response = await fetch(`${API_URL}/auth/login`,{
-      method:"POST",
-      headers:{
-        "Content-type":"application/json"
-      },
-      body:bodyObj
-    });
-
-    if(!response.ok){
-      console.log("invalid credentials");
-      errorMsg.value = "invalid credentials";
-      return false;
-    }
-
-    const data = await response.json();
-    console.log('login data from remote server',data);
-    const {access_token,refresh_token} = data;
-    console.log('access token',access_token);
-    localStorage.setItem('token',access_token);
-    localStorage.setItem('refresh_token',refresh_token);
-
-    const userData = await getUser();
-    localStorage.setItem('user',JSON.stringify(userData));
-
+    await UserService.login(email.value,password.value);
+    const user = await UserService.getProfile();
+    
+    UserService.saveUser(user);
     emitEvent('login-success');
 
     return true;
   } catch (error) {
     console.log(error);
-    errorMsg.value = 'Network error. Try again!';
+    errorMsg.value = error.message;
   }
 }
 
-async function getUser(){
-  const response = await fetch(`${API_URL}/auth/profile`,{
-    method:"GET",
-    headers:{
-      "Content-type":"application/json",
-      "Authorization": "Bearer "+localStorage.getItem("token")
-    }
-  });
-
-  return await response.json();
-}
 </script>
 
 <template>

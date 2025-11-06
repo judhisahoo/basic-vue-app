@@ -1,30 +1,24 @@
 <script setup>
+import UserService from '@/services/UserService';
 import { onMounted, ref } from 'vue';
+
 const emitEvent = defineEmits(['logout']);
 
 const user = ref(null);
-const API_URL =  "https://api.escuelajs.co/api/v1";
-
-async function getUser(){
-  const response = await fetch(`${API_URL}/auth/profile`,{
-    method:"GET",
-    headers:{
-      "Content-type":"application/json",
-      "Authorization": "Bearer "+localStorage.getItem("token")
-    }
-  });
-
-  user.value = await response.json();
-  return true;
-}
+const errorMsg = ref('');
 
 function logout(){
   localStorage.clear();
   emitEvent('logout');
 }
 
-onMounted(()=>{
-  getUser();
+onMounted(async()=>{
+  try {
+    user.value = await UserService.getProfile();
+  } catch (error) {
+     errorMsg.value = error.message;
+    emitEvent('logout');
+  }
 })
 </script>
 
