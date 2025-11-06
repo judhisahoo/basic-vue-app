@@ -1,5 +1,6 @@
 <script setup>
-import { useAuthContext } from '@/context/AuthContext';
+//import { useAuthContext } from '@/context/AuthContext';
+import { useAuthStore } from '@/stores/auth'
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -7,12 +8,14 @@ const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
 
-const {login,token} = useAuthContext();
+//const {login,token} = useAuthContext();
+const authStore = useAuthStore();
 const router = useRouter();
 
 async function loginUser(){
   try {
-    await login(email.value,password.value);
+    //await login(email.value,password.value);
+    await authStore.login(email.value,password.value);
     router.push("/dashboard");
   } catch (error) {
     console.log(error);

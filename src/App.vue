@@ -2,7 +2,7 @@
   <router-view />
 </template>
 <script setup>
-import { provideAuthContext } from './context/AuthContext';
+//import { provideAuthContext } from './context/AuthContext';
 
-provideAuthContext();
+//provideAuthContext();
 </script>
