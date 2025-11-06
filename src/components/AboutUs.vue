@@ -1,0 +1,8 @@
+<script setup>
+
+</script>
+<template>
+  <div>
+    <h2>About Us</h2>
+  </div>
+</template>

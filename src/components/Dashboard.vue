@@ -1,25 +1,19 @@
 <script setup>
-import UserService from '@/services/UserService';
+import { useAuthContext } from '@/context/AuthContext';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const emitEvent = defineEmits(['logout']);
+const {user,logout} = useAuthContext();
+const router = useRouter();
 
-const user = ref(null);
-const errorMsg = ref('');
-
-function logout(){
-  localStorage.clear();
-  emitEvent('logout');
+const handleLogout = ()=>{
+  logout();
+   router.push("/login");
 }
 
-onMounted(async()=>{
-  try {
-    user.value = await UserService.getProfile();
-  } catch (error) {
-     errorMsg.value = error.message;
-    emitEvent('logout');
-  }
-})
+const moveToProfile = ()=>{
+  router.push("/profile");
+}
 </script>
 
 <template>
@@ -29,6 +23,7 @@ onMounted(async()=>{
     <p>Name :: {{ user?.name }}</p>
     <p>Email :: {{ user?.email }}</p>
     <p>role :: {{ user?.role }}</p>
-    <button @click="logout">Logout</button>
+    <button @click="handleLogout()">Logout</button>
+    <button @click="moveToProfile()">Move to Profile</button>
   </div>
 </template>

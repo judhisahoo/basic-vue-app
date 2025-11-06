@@ -1,29 +1,22 @@
 <script setup>
-import UserService from '@/services/UserService';
-import { ref } from 'vue';
-
-
-const emitEvent = defineEmits(['login-success']);
+import { useAuthContext } from '@/context/AuthContext';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
 const errorMsg = ref('');
 
+const {login,token} = useAuthContext();
+const router = useRouter();
 
 async function loginUser(){
-  
-  
   try {
-    await UserService.login(email.value,password.value);
-    const user = await UserService.getProfile();
-    
-    UserService.saveUser(user);
-    emitEvent('login-success');
-
-    return true;
+    await login(email.value,password.value);
+    router.push("/dashboard");
   } catch (error) {
     console.log(error);
-    errorMsg.value = error.message;
+    errorMsg.value = error.message || 'Login Failed';
   }
 }
 
